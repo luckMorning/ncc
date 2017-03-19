@@ -10,5 +10,6 @@ int main(int argc,char *argv[])
 			token t= ts.data[i];
 			printf("<%d,%s>\n",t.c,t.value);
 		}
+
 		printf("%s",ts.msg);
 }
