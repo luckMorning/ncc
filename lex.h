@@ -5,48 +5,48 @@
 #include <stdio.h>
 #include <malloc.h>
 typedef enum {
-	IF,
-	ELSE,
-	FOR,
+	IF, /* if */
+	ELSE, /* else */
+	FOR, /* for */
 	
-	VOID,
-	INT,
-	FLOAT,
-	CHAR,
+	VOID, /* void */
+	INT, /* int */
+	FLOAT,/*float*/
+	CHAR,/* char */
 	
-	RETUEN,
-	BREAK,
-	CONTINUE,
+	RETUEN, /* return */
+	BREAK, /* break */
+	CONTINUE,/* continue */
 	
-	INUM,
-	FNUM,
-	STRING,
-	CCHAR,
+	INUM, /* 1 2 3 4 5 ...*/
+	FNUM, /* 1.0 2.0 3.0 ...*/
+	STRING,/* "hello"*/
+	CCHAR, /* 'a' */
 	
-	PLUS, //+
-	SUB, //-
-	STAR,//
-	DIV,
-	MOD,
+	PLUS, /* '+' */
+	SUB, /* '-' */
+	STAR,/* '*' */
+	DIV, /* '/' */
+	MOD, /* '%' */
 	
-	ULINE,//'_'
-	SIGN,
-	EQ,
-	NEQ,
-	BT,
-	ST,
-	BEQ,
-	SEQ,
+	ULINE,/* '_' */ 
+	SIGN, /* '=' */
+	EQ, /* '==' */
+	NEQ,/* '!=' */
+	GT, /* '>' */
+	LT, /* '<' */
+	GEQ,/* '>=' */
+	LEQ,/* '<=' */
 	
-	SPL,
-	SPR,
-	MPL,
-	MPR,
-	BPL,
-	BPR,
+	SPL, /* '(' */
+	SPR,/* ')' */
+	MPL,/* '[' */
+	MPR,/* ']' */
+	BPL,/* '{' */
+	BPR,/* '}' */
 	
-	ID,
-	ERROR,	
+	ID, /*identify */
+	ERROR
 }var;
 
 typedef struct 
@@ -61,26 +61,27 @@ typedef struct {
 	token *data;
 	int count;
 	int len;
-}tokens;
+}token_set;
+
+typedef struct {
+    token_set ts;
+    int line;
+    FILE * file;
+    char file_name[256];
+}source;
 
 
-FILE *_source;
 
-/*undo getc of file*/
-int undo(FILE *f);
-
-/*return next token*/
-token next_token(); 
 
 /*initilize tokens list*/
-tokens  tokens_init();
+token_set  tokens_init();
 
 /*add token into tokens*/
-int tokens_push(tokens * ts, token tk);
+int tokens_push(token_set * ts, token tk);
 
 /*lex anilize
  *file:source file
  */
-tokens lex( char *file);
+source  lex( char *file);
 
 #endif

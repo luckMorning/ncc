@@ -6,16 +6,16 @@ int undo(FILE *f)
 	fseek(f,ftell(f)-1,SEEK_SET);
 }
 
-tokens tokens_init ()
+token_set tokens_init ()
 {
-		tokens ts;
+		token_set ts;
 		ts.data = (token *)malloc(sizeof(token)*100);
 		ts.count = 0;
 		ts.len = 100;
 		return ts;
 }
 
-int tokens_push(tokens *ts, token tk)
+int tokens_push(token_set *ts, token tk)
 {
 		if (ts-> count == ts->len) {
 			token * data = (token *)malloc(sizeof(token)*(ts->len +100));
@@ -32,46 +32,31 @@ int tokens_push(tokens *ts, token tk)
 			ts->count ++;
 }
 
-tokens  lex(char *file)
+source  lex(char *file)
 {
-	_source = fopen(file,"r");
-	tokens ts = tokens_init();
-	ts.count = 0;
-	if (_source == NULL) {
-		char msg[512] = {0};
-		sprintf(msg,"can't open file \'%s\'",file);
-		strcpy(ts.msg, msg);
-		return ts;
-	}
-	
-	while (!feof(_source)) {
-		token t = next_token();
-		if (t.c != ERROR)
-		tokens_push(&ts,t);	
-	}
-	
-	fclose(_source);
-	_source = NULL;
-	strcpy(ts.msg,"lex ok!");
-	return ts;
+
 }
 
-token next_token()
+token next_token(FILE * _source)
 {
 	token t;
 	char ch;
-	int line = 0;;
-		ch = fgetc(_source);
+	int line = 0;
+    while (1) {
+	    ch = fgetc(_source);
+        if (ch != ' ') break;
+    }
 	switch (ch ) {
 		case ' ':  {
 			break;
-		}
+                   }
 		case '\n': {
 			line ++;
 			break;
 		}
 		case '+': 	{
 			t.c = PLUS;
+            strcpy(t.value,"+")
 			t.line = line;
 			return t;		
 		}
@@ -100,7 +85,7 @@ token next_token()
 			if (nc == '=') {
 				t.c = EQ;	
 			}else {
-				undo(_source);
+				fseek(_source,-1,ftell(_source));
 				t.c = SIGN;	
 			}	
 			t.line = line;
@@ -113,7 +98,7 @@ token next_token()
 				t.line = line;
 				return t;
 			}else {
-				undo(_source);
+				fseek(_source,-1,ftell(_source));
 				t.c = ERROR;
 				t.line = line;
 				return t;
@@ -187,4 +172,40 @@ token next_token()
 		return t;			
 	}
 	return t;	
+}
+
+
+void print_set (token_set* tks)
+{
+    token * tkp = tks->data;
+    int i =0;
+    for (;i<tks->count;i++)
+    {
+        
+        printf("<%d,%s>\n",tkp[i].c,tkp[i].value);
+    }
+}
+
+int main ()
+{
+    token_set tks = tokens_init();
+    token tk;
+    tk.c = STRING;
+    strcpy(tk.value,"hello");
+    tk.line = 1;
+
+    char * file = "main.nc";
+    FILE * f = fopen(file,"r");
+    while (1) {
+        tk = next_token(f);
+        if (tk.c == ERROR) break;
+        tokens_push(&tks,tk);
+    }
+    fclose(f);
+
+    
+    printf("count of token set : %d\n",tks.count);
+    print_set(&tks);
+
+
 }
