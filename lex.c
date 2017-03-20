@@ -62,28 +62,41 @@ token next_token(char *s)
         }
     }
 
-    while (1) {
+
         ch = s[pos++];
         if (ch == '+') {
             v = PLUS;
             value[0] = '+';
-            break;
         }else if(ch == '-') {
             v = SUB;
             value[0] = '-';
-            break;
         }else if (ch == '*') {
             v = MUL;
             value[0] = '*';
-            break;
         }else if (ch == '/') {
             v = DIV;
             value[0] = '/';
-            break;
         }else if (ch == '%') {
             v = MOD;
             value[0] = '%';
-            break;
+        }else if (ch == '(') {
+            v = SPL;
+            value[0] = '(';
+        }else if (ch == ')') {
+            v = SPR;
+            value[0] = ')';
+        }else if (ch == '[') {
+            v = MPL;
+            value[0] = '[';
+        }else if(ch == ']') {
+            v = MPR;
+            value[0] = ']';
+        }else if(ch == '{') {
+            v = BPL;
+            value[0] = '{';
+        }else if(ch == '}') {
+            v = BPR;
+            value[0] = '}';
         }else if (ch == '=') {
             ch = s[pos];/* next char */
             if (ch == '=') {
@@ -94,17 +107,14 @@ token next_token(char *s)
                 v = ASSIGN;
                 value[0] = '=';
             }
-            break;
         }else if (ch == '!') {
             ch = s[pos];
             if (ch == '=') {
                 v = NEQ;
                 strcpy(value,"!=");
                 pos++;
-                break;
             }else {
-                unexpected(line,s[pos-1]);
-                break;
+                t = unexpected(line,s[pos-1]);
             }
         }else if(ch == '>') {
             char nc = s[pos];
@@ -112,11 +122,9 @@ token next_token(char *s)
                 pos++;
                 v = GEQ;
                 strcpy(value,">=");
-                break;
             }else {
                 v = GT;
                 value[0] = '>';
-                break;
             }
         }else if(ch == '<') {
             char nc = s[pos];
@@ -124,24 +132,22 @@ token next_token(char *s)
                 pos++;
                 v = LEQ;
                 strcpy(value,"<=");
-                break;
             }else {
                 v = LT;
                 value[0] = '<';
-                break;
             }
         }else if(ch == '\n'){
             line ++;
         }else if (ch == 0 ) {
             v = END;
             strcpy(value,"EOF");
-            break;
+            
         }else {
             t = unexpected(line,ch);
             t.line = line;
             return t;
         }
-    }
+    
 
     t.c = v;
     t.line = line;

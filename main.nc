@@ -13,4 +13,7 @@ void
 float
 char 
 _
-
+if else for 
+return break
+continue ;
+([{}])
