@@ -1,10 +1,19 @@
 #include "lex.h"
 
 
-source  lex(char *file)
+token_set lex(char *file)
 {
-    source s;
-    return s;
+    token_set ts = tokens_init();
+    token tk;
+    char *res = readfile(file); 
+    if (res == NULL)  return ts;
+    while (1)
+    {
+        tk = next_token(res);
+        tokens_push(&ts,tk);
+        if (tk.c == END) break;
+    }
+    return ts;
 }
 
 char * readfile(char * name)
@@ -97,6 +106,12 @@ token next_token(char *s)
         }else if(ch == '}') {
             v = BPR;
             value[0] = '}';
+        }else if (ch == ';') {
+            v = SEM;
+            value[0] = ';';
+        }else if (ch == ',') {
+            v = COM;
+            value[0] = ',';
         }else if (ch == '=') {
             ch = s[pos];/* next char */
             if (ch == '=') {
@@ -136,6 +151,120 @@ token next_token(char *s)
                 v = LT;
                 value[0] = '<';
             }
+        }else if (ch == '&') {
+            char nc = s[pos];
+            if (nc == '&') {
+                v = AND;
+                strcpy(value,"&&");
+                pos ++;
+            }else {
+                t = unexpected(line,ch);
+            }
+        }else if (ch == '|') {
+            char nc = s[pos];
+            if (nc == '|') {
+                v = OR;
+                strcpy(value,"||");
+                pos ++;
+            }else {
+                t = unexpected(line,ch);
+                return t;
+            }
+        }else if (ch == '\'') {
+            char nc = s[pos+1];
+            if (nc != '\'') {
+                return unexpected(line,nc);
+            }else{
+                v = CCHAR;
+                value[0] = s[pos];
+                pos += 2;
+            }
+        }else if (ch == '\"') {
+            
+            char temp[1024] = {0};
+            int tempi = 0;
+            while (1) {
+                char idc = s[pos++];
+                if (idc == '\n') line ++;
+                if (idc == '\"') break;
+                temp[tempi++] = idc;
+            }
+            v = STRING;
+            strcpy(value,temp);
+        
+        }else if ( (ch >= 'A' && ch <= 'Z' ) || ch == '_' || (ch >= 'a' && ch <= 'z')) {
+            pos --;
+            char temp[256] = {0};
+            int tempi = 0;
+            while (1) {
+                char idc = s[pos++];
+                if (idc == ' ') break;
+                if (idc == '\n') {
+                    line++;
+                    break;
+                }
+                if ((ch >= 'A' && ch <= 'Z' ) || (ch>='a'&&ch<='z') || ch == '_' || (ch >= '0' && ch <= '9')){
+                    temp[tempi++] = idc;
+                }else{
+                    break;
+                }
+            }
+
+        
+            strcpy(value,temp);
+            if (!strcmp(value,"if")) {
+                v = IF;
+            }else if( !strcmp(value,"else") ) {
+                v = ELSE;
+            }else if(!strcmp(value,"for")) {
+                v = FOR;
+            }else if(!strcmp(value,"void")) {
+                v = VOID;
+            }else if(!strcmp(value,"char")) {
+                v = CHAR;
+            }else if(!strcmp(value,"int")) {
+                v = INT;
+            }else if(!strcmp(value,"float")) {
+                v = FLOAT;
+            }else if(!strcmp(value,"break")) {
+                v = BREAK;
+            }else if(!strcmp(value,"continue")) {
+                v = CONTINUE;
+            }else if(!strcmp(value,"return")) {
+                v = RETURN;
+            }else {
+                v = ID;
+            }
+        }else if (ch >= '1' && ch <= '9') {
+            pos --;
+            int ti = 0;
+            int have_point = 0;
+            while (1) {
+                char tc = s[pos++];
+                if (tc == ' ' || tc == '\n') {
+                    if (tc == '\n') {
+                        line ++;
+                    }
+                    break;
+                }
+                if ((tc >= '0' && tc <= '9') || tc == '.')  {
+                    if (tc == '.') {
+                        if (!have_point) {
+                        have_point = 1;
+                        }else {
+                            return unexpected(line,tc);
+                        }
+                    }
+                    value[ti++] = tc;
+                }else {
+                    return unexpected(line,tc);
+                }
+            }
+            if (have_point) {
+                v = FNUM; 
+            }else {
+                v = INUM;
+            }
         }else if(ch == '\n'){
             line ++;
         }else if (ch == 0 ) {
@@ -168,27 +297,4 @@ void print_set (token_set* tks)
     }
 }
 
-int main ()
-{
-    token_set tks = tokens_init();
-    token tk;
-    tk.c = STRING;
-    strcpy(tk.value,"hello");
-    tk.line = 1;
 
-    char * file = "main.nc";
-    char *res = readfile(file); 
-
-    while (1)
-    {
-        tk = next_token(res);
-        tokens_push(&tks,tk);
-        if (tk.c == END) break;
-    }
-
-    
-    printf("count of token set : %d\n",tks.count);
-    print_set(&tks);
-
-
-}

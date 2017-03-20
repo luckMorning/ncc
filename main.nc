@@ -17,3 +17,8 @@ if else for
 return break
 continue ;
 ([{}])
+    _32
+    _adf
+    ,
+
+    int i = 10

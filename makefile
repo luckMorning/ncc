@@ -1,7 +1,12 @@
 
-lex:lex.c lex.h token.o 
-	gcc  lex.c token.o -o lex
+
+GCC=gcc
+
+lex:main.c lex.o
+	$(GCC) main.c lex.o token.o -o lex
+lex.o:lex.c lex.h token.o 
+	$(GCC) -c lex.c 
 token.o:token.c token.h
-	gcc -c token.c 
+	$(GCC) -c token.c 
 clean:
-	rm -f lex token.o 
+	rm -f lex token.o lex.o 

@@ -1,15 +1,16 @@
 #include <stdio.h>
 #include "lex.h"
 
-int main(int argc,char *argv[])
+int main (int argc,char *argv[])
 {
-		tokens ts = lex(argv[1]);
-		int i= 0;
-		printf("tokens:%d\n",ts.count);
-		for (;i<ts.count;i++) {
-			token t= ts.data[i];
-			printf("<%d,%s>\n",t.c,t.value);
-		}
+    if (argc < 2) {
+        printf("no input files\n");
+        return 0;
+    }
+   
+    token_set tks = lex(argv[1]);   
+    printf("count of token set : %d\n",tks.count);
+    print_set(&tks);
 
-		printf("%s",ts.msg);
+    return 0;
 }

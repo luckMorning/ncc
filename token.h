@@ -3,49 +3,55 @@
 #include <malloc.h>
 #include <stdio.h>
 typedef enum {
-	IF, /* if */
-	ELSE, /* else */
-	FOR, /* for */
+	IF,         /* if */
+	ELSE,       /* else */
+	FOR,        /* for */
 	
-	VOID, /* void */
-	INT, /* int */
-	FLOAT,/*float*/
-	CHAR,/* char */
+	VOID,       /* void */
+	INT,        /* int */
+	FLOAT,      /*float*/
+	CHAR,       /* char */
 	
-	RETUEN, /* return */
-	BREAK, /* break */
-	CONTINUE,/* continue */
+	RETURN,     /* return */
+	BREAK,      /* break */
+	CONTINUE,   /* continue */
 	
-	INUM, /* 1 2 3 4 5 ...*/
-	FNUM, /* 1.0 2.0 3.0 ...*/
-	STRING,/* "hello"*/
-	CCHAR, /* 'a' */
+	INUM,       /* 1 2 3 4 5 ...*/
+	FNUM,       /* 1.0 2.0 3.0 ...*/
+	STRING,     /* "hello"*/
+	CCHAR,      /* 'a' */
 	
-	PLUS, /* '+' */
-	SUB, /* '-' */
-	MUL,/* '*' */
-	DIV, /* '/' */
-	MOD, /* '%' */
+	PLUS,       /* '+' */
+	SUB,        /* '-' */
+	MUL,        /* '*' */
+	DIV,        /* '/' */
+	MOD,        /* '%' */
 	
-	ULINE,/* '_' */ 
-	ASSIGN, /* '=' */
-	EQ, /* '==' */
-	NEQ,/* '!=' */
-	GT, /* '>' */
-	LT, /* '<' */
-	GEQ,/* '>=' */
-	LEQ,/* '<=' */
+	ULINE,      /* '_' */ 
+	ASSIGN,     /* '=' */
+	EQ,         /* '==' */
+	NEQ,        /* '!=' */
+	GT,         /* '>' */
+	LT,         /* '<' */
+	GEQ,        /* '>=' */
+	LEQ,        /* '<=' */
+
+    AND,        /* && */
+    OR,         /* || */
 	
-	SPL, /* '(' */
-	SPR,/* ')' */
-	MPL,/* '[' */
-	MPR,/* ']' */
-	BPL,/* '{' */
-	BPR,/* '}' */
+	SPL,        /* '(' */
+	SPR,        /* ')' */
+	MPL,        /* '[' */
+	MPR,        /* ']' */
+	BPL,        /* '{' */
+	BPR,        /* '}' */
+
+    COM,        /* ',' */
+    SEM,        /* ';' */
 	
-	ID, /*identify */
-    ENDL, /* '\n' */
-    END, /* EOF */
+	ID,         /*identify */
+    ENDL,       /* '\n' */
+    END,        /* EOF */
 	ERROR
 }var;
 
