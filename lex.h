@@ -13,12 +13,16 @@ typedef struct {
     char file_name[256];
 }source;
 
-
+/*@name file name
+ *#return char buffer from name
+ */
 char *readfile(char *name);
 
-/*lex anilize
- *file:source file
+
+/*@file: sourcefile name
+ *#source: deque of token from file
  */
 source  lex( char *file);
 
+token next_token(char *s);
 #endif

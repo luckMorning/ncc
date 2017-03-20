@@ -23,12 +23,12 @@ typedef enum {
 	
 	PLUS, /* '+' */
 	SUB, /* '-' */
-	STAR,/* '*' */
+	MUL,/* '*' */
 	DIV, /* '/' */
 	MOD, /* '%' */
 	
 	ULINE,/* '_' */ 
-	SIGN, /* '=' */
+	ASSIGN, /* '=' */
 	EQ, /* '==' */
 	NEQ,/* '!=' */
 	GT, /* '>' */
@@ -44,6 +44,8 @@ typedef enum {
 	BPR,/* '}' */
 	
 	ID, /*identify */
+    ENDL, /* '\n' */
+    END, /* EOF */
 	ERROR
 }var;
 
@@ -68,5 +70,7 @@ token_set  tokens_init();
 
 /*add token into tokens*/
 int tokens_push(token_set * ts, token tk);
+
+
 
 #endif

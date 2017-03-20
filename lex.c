@@ -1,7 +1,6 @@
 #include "lex.h"
 
 
-
 source  lex(char *file)
 {
     source s;
@@ -21,33 +20,132 @@ char * readfile(char * name)
     int pos = 0;
     while (1) {
         char ch = fgetc(f);
-        if (ch == EOF) {
-            res[pos] = 0;
-            break;
-        }
+        if(feof(f)) break;
         if (ch == '\r') continue;
-        res[pos] = ch;
+        res[pos++] = ch;
     }
+    res[pos] = 0;
     fclose(f);
     return res;
 }
 
-void unget(FILE* f) 
+token unexpected(int line,char ch)
 {
-    int pos = ftell(f);
-    rewind(f);
-    fseek(f,pos-1,SEEK_SET);
+    token t;
+    t.c = ERROR;
+    t.line = line;
+    sprintf(t.value,"unexpected character: line:%d \'%c\'",line,ch);
+    return t;
 }
 
-token next_token(FILE * s)
+token next_token(char *s)
 {
     char ch;
     token t;
-    ch = fgetc(s);
-    printf("[%c ",ch);
-    unget(s);
-    ch = fgetc(s);
-    printf("%c] \n",ch);
+    var v;
+    static int line = 1;
+    char value[125] = {0};
+    memset(t.value,0,sizeof(t.value));
+
+    static int pos = 0;
+    
+    /*skip*/
+    while (1) {
+        ch = s[pos++];
+        if (ch != ' ') {
+            if (ch == '\n') {
+                line ++;
+                continue;
+            }
+            pos --;
+            break;
+        }
+    }
+
+    while (1) {
+        ch = s[pos++];
+        if (ch == '+') {
+            v = PLUS;
+            value[0] = '+';
+            break;
+        }else if(ch == '-') {
+            v = SUB;
+            value[0] = '-';
+            break;
+        }else if (ch == '*') {
+            v = MUL;
+            value[0] = '*';
+            break;
+        }else if (ch == '/') {
+            v = DIV;
+            value[0] = '/';
+            break;
+        }else if (ch == '%') {
+            v = MOD;
+            value[0] = '%';
+            break;
+        }else if (ch == '=') {
+            ch = s[pos];/* next char */
+            if (ch == '=') {
+                v = EQ;
+                strcpy(value,"==");
+                pos ++;
+            }else {
+                v = ASSIGN;
+                value[0] = '=';
+            }
+            break;
+        }else if (ch == '!') {
+            ch = s[pos];
+            if (ch == '=') {
+                v = NEQ;
+                strcpy(value,"!=");
+                pos++;
+                break;
+            }else {
+                unexpected(line,s[pos-1]);
+                break;
+            }
+        }else if(ch == '>') {
+            char nc = s[pos];
+            if (nc == '=') {
+                pos++;
+                v = GEQ;
+                strcpy(value,">=");
+                break;
+            }else {
+                v = GT;
+                value[0] = '>';
+                break;
+            }
+        }else if(ch == '<') {
+            char nc = s[pos];
+            if (nc == '=') {
+                pos++;
+                v = LEQ;
+                strcpy(value,"<=");
+                break;
+            }else {
+                v = LT;
+                value[0] = '<';
+                break;
+            }
+        }else if(ch == '\n'){
+            line ++;
+        }else if (ch == 0 ) {
+            v = END;
+            strcpy(value,"EOF");
+            break;
+        }else {
+            t = unexpected(line,ch);
+            t.line = line;
+            return t;
+        }
+    }
+
+    t.c = v;
+    t.line = line;
+    strcpy(t.value,value);
     return t;
 }
 
@@ -71,13 +169,16 @@ int main ()
     tk.c = STRING;
     strcpy(tk.value,"hello");
     tk.line = 1;
-    tokens_push(&tks,tk);
-    tokens_push(&tks,tk);
 
     char * file = "main.nc";
     char *res = readfile(file); 
-    if (res)
-    printf("res;%s\n",res);
+
+    while (1)
+    {
+        tk = next_token(res);
+        tokens_push(&tks,tk);
+        if (tk.c == END) break;
+    }
 
     
     printf("count of token set : %d\n",tks.count);
