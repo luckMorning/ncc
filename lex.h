@@ -14,6 +14,7 @@ typedef struct {
 }source;
 
 
+char *readfile(char *name);
 
 /*lex anilize
  *file:source file

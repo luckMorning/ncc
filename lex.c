@@ -8,11 +8,13 @@ source  lex(char *file)
     return s;
 }
 
+
+
 void unget(FILE* f) 
 {
     int pos = ftell(f);
     rewind(f);
-    fseek(f,pos+1,SEEK_SET);
+    fseek(f,pos-1,SEEK_SET);
 }
 
 token next_token(FILE * s)
