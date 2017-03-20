@@ -203,7 +203,7 @@ token next_token(char *s)
                     line++;
                     break;
                 }
-                if ((ch >= 'A' && ch <= 'Z' ) || (ch>='a'&&ch<='z') || ch == '_' || (ch >= '0' && ch <= '9')){
+                if ((idc >= 'A' && ch <= 'Z' ) || (idc>='a'&&ch<='z') || idc == '_' || (idc >= '0' && idc <= '9')){
                     temp[tempi++] = idc;
                 }else{
                     break;
