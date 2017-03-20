@@ -2,5 +2,6 @@
 
 int main ()
 {
-    printf()
+    int var = 12f;
+    printf();
 }

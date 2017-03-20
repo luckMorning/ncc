@@ -206,6 +206,7 @@ token next_token(char *s)
                 if ((idc >= 'A' && ch <= 'Z' ) || (idc>='a'&&ch<='z') || idc == '_' || (idc >= '0' && idc <= '9')){
                     temp[tempi++] = idc;
                 }else{
+                    pos --;
                     break;
                 }
             }
@@ -250,14 +251,14 @@ token next_token(char *s)
                 if ((tc >= '0' && tc <= '9') || tc == '.')  {
                     if (tc == '.') {
                         if (!have_point) {
-                        have_point = 1;
+                            have_point = 1;
                         }else {
                             return unexpected(line,tc);
                         }
                     }
                     value[ti++] = tc;
                 }else {
-                    return unexpected(line,tc);
+                    break;
                 }
             }
             if (have_point) {
