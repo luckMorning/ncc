@@ -8,7 +8,29 @@ source  lex(char *file)
     return s;
 }
 
+char * readfile(char * name)
+{
+    FILE * f = fopen(name,"r");
+    if (f == NULL) return NULL;
+    fseek(f,0,SEEK_END);
+    int size = ftell(f);
+    char * res = (char *)malloc(size);
+    if (res == NULL) return NULL;
 
+    rewind(f);
+    int pos = 0;
+    while (1) {
+        char ch = fgetc(f);
+        if (ch == EOF) {
+            res[pos] = 0;
+            break;
+        }
+        if (ch == '\r') continue;
+        res[pos] = ch;
+    }
+    fclose(f);
+    return res;
+}
 
 void unget(FILE* f) 
 {
@@ -53,14 +75,9 @@ int main ()
     tokens_push(&tks,tk);
 
     char * file = "main.nc";
-    FILE * f = fopen(file,"r");
-    while (1) {
-        if(feof(f)) break;
-        tk = next_token(f);
-        //tokens_push(&tks,tk);
-    }
-    fclose(f);
-
+    char *res = readfile(file); 
+    if (res)
+    printf("res;%s\n",res);
 
     
     printf("count of token set : %d\n",tks.count);
