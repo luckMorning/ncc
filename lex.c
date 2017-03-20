@@ -8,13 +8,20 @@ source  lex(char *file)
     return s;
 }
 
+void unget(FILE* f) 
+{
+    int pos = ftell(f);
+    rewind(f);
+    fseek(f,pos+1,SEEK_SET);
+}
+
 token next_token(FILE * s)
 {
     char ch;
     token t;
     ch = fgetc(s);
     printf("[%c ",ch);
-    fseek(s,-1,SEEK_CUR);
+    unget(s);
     ch = fgetc(s);
     printf("%c] \n",ch);
     return t;
@@ -42,16 +49,16 @@ int main ()
     tk.line = 1;
     tokens_push(&tks,tk);
     tokens_push(&tks,tk);
-/*
+
     char * file = "main.nc";
     FILE * f = fopen(file,"r");
     while (1) {
         if(feof(f)) break;
         tk = next_token(f);
-      //  tokens_push(&tks,tk);
+        //tokens_push(&tks,tk);
     }
     fclose(f);
-    */
+
 
     
     printf("count of token set : %d\n",tks.count);
