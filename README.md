@@ -92,7 +92,8 @@
 
 <function_body>::=<bpl>{<var_declaration><sem> | <statement> }<bpr>
 
-<statement>::={<id>}{<assign>}<expression>
+<statement>::={<id>}{<assign>}<expression> | <if_statement> | <for_statement> | <return_statement>
+
 
 <expression>::=
 

@@ -62,7 +62,7 @@ typedef enum {
 	ID,         /*identify */
     ENDL,       /* '\n' */
     END,        /* EOF */
-	ERROR
+	UNKNOW
 }var;
 
 typedef struct _t

@@ -10,6 +10,7 @@ token_set lex(char *file)
     while (1)
     {
         tk = next_token(res);
+        if (tk.c == UNKNOW) printf("unknow:line:%d note:%s\n",tk.line,tk.value);
         tokens_push(&ts,tk);
         if (tk.c == END) break;
     }
@@ -55,13 +56,10 @@ char * readfile(char * name)
     return res;
 }
 
-token unexpected(int line,char ch)
+void unknow_c(int line,char* ch)
 {
-    token t;
-    t.c = ERROR;
-    t.line = line;
-    sprintf(t.value,"unexpected character: line:%d \'%c\'",line,ch);
-    return t;
+
+    printf("unknow character: line:%d \'%s\'",line,ch);
 }
 
 token next_token(char *s)
@@ -158,7 +156,7 @@ token next_token(char *s)
             v = COM;
             value[0] = ',';
         }else if (ch == '#') {
-            v = COM;
+            v =POU;
             value[0] = ch;
         }else if (ch == '=') {
             ch = s[pos];/* next char */
@@ -177,7 +175,8 @@ token next_token(char *s)
                 strcpy(value,"!=");
                 pos++;
             }else {
-                t = unexpected(line,s[pos-1]);
+                v = UNKNOW;
+                value[0] = ch;
             }
         }else if(ch == '>') {
             char nc = s[pos];
@@ -206,7 +205,8 @@ token next_token(char *s)
                 strcpy(value,"&&");
                 pos ++;
             }else {
-                t = unexpected(line,ch);
+                v = UNKNOW;
+                value[0] = ch;
             }
         }else if (ch == '|') {
             char nc = s[pos];
@@ -215,8 +215,8 @@ token next_token(char *s)
                 strcpy(value,"||");
                 pos ++;
             }else {
-                t = unexpected(line,ch);
-                return t;
+                v = UNKNOW;
+                value[0] = ch;
             }
         }else if (ch == '\'') {
             char nc = s[pos+1];
@@ -318,7 +318,9 @@ token next_token(char *s)
                         if (!have_point) {
                             have_point = 1;
                         }else {
-                            return unexpected(line,tc);
+                            v = UNKNOW;
+                            value[0] = tc;
+                            break;
                         }
                     }
                     value[ti++] = tc;
@@ -340,9 +342,8 @@ token next_token(char *s)
             strcpy(value,"EOF");
             
         }else {
-            t = unexpected(line,ch);
-            t.line = line;
-            return t;
+            v = UNKNOW;
+            value[0] = ch;
         }
     
 
