@@ -22,3 +22,7 @@ continue ;
     ,
 
     int i = 10
+
+    /* */int ncy
+    // sjsjs sns
+    int a

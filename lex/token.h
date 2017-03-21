@@ -2,6 +2,8 @@
 #define _TOKEN_H_
 #include <malloc.h>
 #include <stdio.h>
+
+/*all of token */
 typedef enum {
 	IF,         /* if */
 	ELSE,       /* else */
@@ -23,9 +25,12 @@ typedef enum {
 	
 	PLUS,       /* '+' */
 	SUB,        /* '-' */
-	MUL,        /* '*' */
+	STAR,        /* '*' */
 	DIV,        /* '/' */
 	MOD,        /* '%' */
+
+    SPLUS,      /* ++ */
+    SSUB,       /* -- */
 	
 	ULINE,      /* '_' */ 
 	ASSIGN,     /* '=' */
@@ -46,7 +51,9 @@ typedef enum {
 	BPL,        /* '{' */
 	BPR,        /* '}' */
 
+    DOT,        /* '.' */
     COM,        /* ',' */
+    COL,        /* ':' */
     SEM,        /* ';' */
 	
 	ID,         /*identify */

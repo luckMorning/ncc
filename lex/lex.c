@@ -16,6 +16,23 @@ token_set lex(char *file)
     return ts;
 }
 
+char turn_c (char ch)
+{
+    switch(ch) {
+    case '\'':
+        return '\'';
+    case 't':
+        return '\t';
+    case 'n':
+        return '\n';
+    case '\"':
+        return '\"';
+defalut:
+        return ch;
+    }
+    return ch;
+}
+
 char * readfile(char * name)
 {
     FILE * f = fopen(name,"r");
@@ -61,7 +78,18 @@ token next_token(char *s)
     /*skip*/
     while (1) {
         ch = s[pos++];
-        if (ch != ' ') {
+        if (ch != ' ' && ch != '\t') {
+            if (ch == '/') {
+                if(s[pos] == '*') {
+                    pos = strstr(s+pos,"*/") -s + 2; 
+                    continue;
+                } 
+                if(s[pos] == '/') {
+                    pos = strstr(s+pos,"\n") -s +1;
+                    line ++;
+                    continue;
+                }
+            }
             if (ch == '\n') {
                 line ++;
                 continue;
@@ -74,13 +102,27 @@ token next_token(char *s)
 
         ch = s[pos++];
         if (ch == '+') {
-            v = PLUS;
-            value[0] = '+';
+            char nc = s[pos];
+            if (nc == '+') {
+                pos ++;
+                v = SPLUS;
+                strcpy(value,"++");
+            }else {
+                v = PLUS;
+                value[0] = '+';
+            }
         }else if(ch == '-') {
-            v = SUB;
-            value[0] = '-';
+            char nc = s[pos];
+            if (nc == '-') {
+                pos ++;
+                v = SSUB;
+                strcpy(value,"--");
+            }else {
+                v = SUB;
+                value[0] = '-';
+            }
         }else if (ch == '*') {
-            v = MUL;
+            v = STAR;
             value[0] = '*';
         }else if (ch == '/') {
             v = DIV;
@@ -106,6 +148,12 @@ token next_token(char *s)
         }else if(ch == '}') {
             v = BPR;
             value[0] = '}';
+        }else if (ch == '.') {
+            v = DOT;
+            value[0] = '.';
+        }else if (ch == ':') {
+            v = COL;
+            value[0] = ':';
         }else if (ch == ';') {
             v = SEM;
             value[0] = ';';
@@ -172,8 +220,14 @@ token next_token(char *s)
             }
         }else if (ch == '\'') {
             char nc = s[pos+1];
-            if (nc != '\'') {
-                return unexpected(line,nc);
+             
+            if (nc != '\'' ||  s[pos] == '\\') {
+                if (s[pos] == '\\' && s[pos+2] == '\'') {
+                    v = CCHAR;
+                    value[0] = turn_c(nc);
+                    pos += 3;
+
+                }
             }else{
                 v = CCHAR;
                 value[0] = s[pos];
@@ -183,10 +237,20 @@ token next_token(char *s)
             
             char temp[1024] = {0};
             int tempi = 0;
+            int t = 0;
             while (1) {
+        
                 char idc = s[pos++];
                 if (idc == '\n') line ++;
-                if (idc == '\"') break;
+                if (idc == '\\') {
+                    t = 1;
+                    continue;
+                } 
+                if (t) {
+                    idc = turn_c(idc);
+                    t = 0;
+                }
+                if (idc == '\"' && !t) break;
                 temp[tempi++] = idc;
             }
             v = STRING;
@@ -236,7 +300,7 @@ token next_token(char *s)
             }else {
                 v = ID;
             }
-        }else if (ch >= '1' && ch <= '9') {
+        }else if (ch >= '0' && ch <= '9') {
             pos --;
             int ti = 0;
             int have_point = 0;
