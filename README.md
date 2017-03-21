@@ -61,3 +61,39 @@
 	ERROR
 };
 
+
+
+<program>::={<declaration> | <function_definition>}<eof>
+
+<declaration>::=<var_declaration> <sem> 
+               |<function_declaration> <sem>
+
+<var_declaration>::=<type><id_list><sem> 
+                   |<type><id_list><assign><value><sem>
+
+
+<function_declaration>::=<type><id><spl><pagram_list><spr>
+
+
+
+<type>::=<void>
+        |<int>
+        |<char>
+        |<float>
+        |<enum>
+        |<struct>
+<id_list>::=<id>{<com><id>}
+<pagram_list>::={<type><id>{<com><type><id>}}
+
+
+
+
+<function_definition>::=<function_declaration><function_body>
+
+<function_body>::=<bpl>{<var_declaration><sem> | <statement> }<bpr>
+
+<statement>::={<id>}{<assign>}<expression>
+
+<expression>::=
+
+
