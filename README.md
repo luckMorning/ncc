@@ -1,6 +1,4 @@
  enum {
-
-
 	IF,         /* if */
 	ELSE,       /* else */
 	FOR,        /* for */
