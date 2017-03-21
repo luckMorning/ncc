@@ -11,8 +11,10 @@ typedef enum {
 	
 	VOID,       /* void */
 	INT,        /* int */
-	FLOAT,      /*float*/
+	FLOAT,      /* float */
 	CHAR,       /* char */
+    ENUM,       /* enum */
+    STRUCT,     /* struct */
 	
 	RETURN,     /* return */
 	BREAK,      /* break */
@@ -55,6 +57,7 @@ typedef enum {
     COM,        /* ',' */
     COL,        /* ':' */
     SEM,        /* ';' */
+    POU,        /* '#' */
 	
 	ID,         /*identify */
     ENDL,       /* '\n' */

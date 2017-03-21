@@ -90,10 +90,7 @@ token next_token(char *s)
                     continue;
                 }
             }
-            if (ch == '\n') {
-                line ++;
-                continue;
-            }
+            
             pos --;
             break;
         }
@@ -160,6 +157,9 @@ token next_token(char *s)
         }else if (ch == ',') {
             v = COM;
             value[0] = ',';
+        }else if (ch == '#') {
+            v = COM;
+            value[0] = ch;
         }else if (ch == '=') {
             ch = s[pos];/* next char */
             if (ch == '=') {
@@ -263,11 +263,7 @@ token next_token(char *s)
             while (1) {
                 char idc = s[pos++];
                 if (idc == ' ') break;
-                if (idc == '\n') {
-                    line++;
-                    break;
-                }
-                if ((idc >= 'A' && ch <= 'Z' ) || (idc>='a'&&ch<='z') || idc == '_' || (idc >= '0' && idc <= '9')){
+                if ((idc >= 'A' && idc <= 'Z' ) || (idc>='a'&&ch<='z') || idc == '_' || (idc >= '0' && idc <= '9')){
                     temp[tempi++] = idc;
                 }else{
                     pos --;
@@ -277,6 +273,7 @@ token next_token(char *s)
 
         
             strcpy(value,temp);
+            /* parse key word */
             if (!strcmp(value,"if")) {
                 v = IF;
             }else if( !strcmp(value,"else") ) {
@@ -291,6 +288,10 @@ token next_token(char *s)
                 v = INT;
             }else if(!strcmp(value,"float")) {
                 v = FLOAT;
+            }else if(!strcmp(value,"enum")) {
+                v = ENUM;
+            }else if(!strcmp(value,"struct")) {
+                v = STRUCT;
             }else if(!strcmp(value,"break")) {
                 v = BREAK;
             }else if(!strcmp(value,"continue")) {
@@ -332,6 +333,8 @@ token next_token(char *s)
             }
         }else if(ch == '\n'){
             line ++;
+            v = ENDL;
+            strcpy(value,"endl");
         }else if (ch == 0 ) {
             v = END;
             strcpy(value,"EOF");
