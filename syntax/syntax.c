@@ -41,7 +41,16 @@ int parse_type()
     return 0;
 }
 
+void parse_enum()
+{}
+void parse_struct()
+{
+    if (tk->c == ID) {
 
+    }
+}
+void parse_init() 
+{}
 void parse_declarator()
 {}
 
@@ -61,6 +70,8 @@ void parse_declaration ()
         if (tk->c == ASSIGN) {
             get_token();
             parse_init(); /* initializer for id */
+        }else if (tk->c == BPL) {
+            
         }
     }
 
@@ -75,9 +86,13 @@ int syntax (token_set *tks)
     return 0;
 }
 
-int main ()
+int main (int argc,char *argv[])
 {
-    token_set tks = lex("syntax.c");
+    if (argc < 2) {
+        printf("no input files\n");
+        return 1;
+    }
+    token_set tks = lex(argv[1]);
     return syntax(&tks);
 }
 

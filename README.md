@@ -66,8 +66,8 @@
 <declaration>::=<var_declaration> <sem> 
                |<function_declaration> <sem>
 
-<var_declaration>::=<type><id_list><sem> 
-                   |<type><id_list><assign><value><sem>
+<var_declaration>::=<type>{star}<id_list><sem> 
+                   |<type>{<star>}{<id><assign><value>}<sem>
 
 
 <function_declaration>::=<type><id><spl><pagram_list><spr>
@@ -80,7 +80,8 @@
         |<float>
         |<enum>
         |<struct>
-<id_list>::=<id>{<com><id>}
+
+
 <pagram_list>::={<type><id>{<com><type><id>}}
 
 
