@@ -1,5 +1,4 @@
-#include <stdio.h>
-#include "../lex/lex.h"
+#include "syntax.h"
 
 token * tk = NULL;
 int line = 1;
@@ -32,23 +31,37 @@ int parse_type()
             return 1;
         case ENUM:
             get_token();
+            parse_enum();
+            return 1;
         case STRUCT:
             get_token();
-            return parse_struct();
+            parse_struct();
+            return 1;
     }
     return 0;
 }
 
 
+void parse_declarator()
+{}
 
 void parse_declaration ()
 {
-    if (!parse_type()) {
-        expect("<type>");
-        get_token();
-    }
     if (tk->c == SEM) {
         get_token();
+        return;
+    }
+   
+    if (!parse_type()) {
+        expect("<type>");
+    }
+
+    while (1) {
+        parse_declarator();
+        if (tk->c == ASSIGN) {
+            get_token();
+            parse_init(); /* initializer for id */
+        }
     }
 
 }

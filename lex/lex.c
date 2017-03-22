@@ -28,6 +28,16 @@ char turn_c (char ch)
         return '\n';
     case '\"':
         return '\"';
+    case '0':
+        return '\0';
+    case 'f':
+        return '\f';
+    case 'b':
+        return '\b';
+    case 'r':
+        return '\r';
+    case 'v':
+        return '\v';
 defalut:
         return ch;
     }
