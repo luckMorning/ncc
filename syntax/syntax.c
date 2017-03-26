@@ -2,8 +2,15 @@
 
 token * tk = NULL;
 int line = 1;
-
+int l = 0;
 int e = 0;
+int syn_level = 0;
+
+void slog (char *msg)
+{
+    if (l)
+    printf ("%s",msg);
+}
 void expect(char *msg)
 {
     e++;
@@ -16,8 +23,34 @@ void error(char *msg)
     printf("error: line:%d note:%s\n",line,msg);
 }
 
+void tab()
+{
+    int i = 0;
+    for(i=0;i<syn_level;i++) {
+        printf("    ");
+    }
+}
+void out()
+{
+   if (tk->c == ENDL)  {
+        printf("\n");
+        if (tk->next->c == BPR) {
+            syn_level --; 
+        }
+        tab();
+    }else if (tk->c == BPL) {
+        printf("%s ",tk->value);
+        syn_level ++;
+    }else {
+        printf("%s ",tk->value);
+    }
+ 
+}
+
 void get_token()
 {
+     
+    out();
     tk = tk->next;
 }
 
@@ -26,8 +59,20 @@ void get_token()
 int parse_type()
 {
     var v = tk->c;
-    if(v == VOID || v == CHAR || v == INT || v == FLOAT)
+    if(v == VOID || v == CHAR || v == INT || v == FLOAT || v == STRING) {
+        get_token();
+        while (tk->c == MPL) {
+            get_token();
+            if (tk->c != MPR) {
+                expect("']'");
+            }else {
+                get_token();
+            }
+        }
         return 1;
+    }
+    else 
+        return 0;
 
 }
 
@@ -39,48 +84,57 @@ void jump_to(var v)
 void parse_enum()
 {}
 
-
-void parse_struct()
+void parse_pagram()
 {
-    if (tk->c == ID) {
-
-        get_token();
-    } else if (tk->c == BPL) {
-        get_token();
-        while (tk->c != BPR) {
-            if (!parse_type()) {
-                expect("<类型符>");
-            }
-            get_token();
-            if (tk->c != ID) {
-                expect("<标识符>");
-            }
-            get_token();
-            if (tk->c != SEM) {
-                expect(";");
-            }
-        return;
+    get_token();
+    while(tk->c != SPR){ 
+        printf("参数");
+        if (!parse_type()) {
+            expect("<type>");
         }
-    }else {
-        expect("<标识符> or <{>");
+        if (tk->c == ID) {
+            parse_init();
+        }else {
+            expect("id");
+        }
+        if (tk->c != SPR ) {
+            if (tk->c != COM) {
+                expect(",");
+            }else {
+                get_token();
+            }
+        }
     }
     get_token();
 }
+void parse_funcbody()
+{
+    jump_to(BPR);
+    get_token();
+}
+
+
 void parse_init() 
 {
-    get_token();
-    if (tk->c != ASSIGN)
-    {
-        return;
-    }else {
+    if (tk->c == ID) {
         get_token();
-        if(tk->c != CCHAR && tk->c != INUM && tk->c != FNUM && tk->c != STRING && tk->c != ID) {
-            expect("<初始值>");
-        }else {
-            get_token();
-        }
+    }else {
+        expect("<id>");
     }
+
+     if (tk->c == ASSIGN)
+    {
+        get_token();
+        if(tk->c != CCHAR && tk->c != INUM && tk->c != FNUM && tk->c != CSTRING && tk->c != ID) {
+            expect("<初始值>");
+        } else
+            get_token();
+    }else 
+        return;
+
+    
 }
+
 
 void parse_declaration ()
 {
@@ -97,18 +151,31 @@ void parse_declaration ()
         return;
     }
     if( !parse_type()) {
-        expect("<类型符>");
+        expect("<type>");
     }
-    get_token();
+
+    
     if (tk->c == ID) {
+        slog("碰到id,解析初始化");
         parse_init();
-        if (tk->c != SEM) {
-            expect(";");
+        if (tk->c == SEM) {
+            get_token();
+            return;
+        }else if (tk->c == SPL){
+            slog("左小括号，函数参数解析");
+            parse_pagram();
+            if (tk->c == SEM) 
+                return;
+            slog("函数体解析");
+            parse_funcbody();
+            return;
+        }else if ( tk->c == COM ) {
+            while (tk->c == COM) {
+                get_token();
+                parse_init();
+            }
+            if(tk->c != SEM) expect(";");
         }
-    }else if (tk->c == BPL) {
-        
-    }else {
-        expect("<id> or '{'");
     }
 }
 int syntax (token_set *tks)
