@@ -13,6 +13,7 @@ typedef enum {
 	INT,        /* int */
 	FLOAT,      /* float */
 	CHAR,       /* char */
+    STRING,     /* string */
     ENUM,       /* enum */
     STRUCT,     /* struct */
 	
@@ -22,7 +23,7 @@ typedef enum {
 	
 	INUM,       /* 1 2 3 4 5 ...*/
 	FNUM,       /* 1.0 2.0 3.0 ...*/
-	STRING,     /* "hello"*/
+	CSTRING,     /* "hello"*/
 	CCHAR,      /* 'a' */
 	
 	PLUS,       /* '+' */
@@ -30,6 +31,8 @@ typedef enum {
 	STAR,        /* '*' */
 	DIV,        /* '/' */
 	MOD,        /* '%' */
+    BAND,       /* '&' */
+    BOR,        /* '|' */
 
     SPLUS,      /* ++ */
     SSUB,       /* -- */

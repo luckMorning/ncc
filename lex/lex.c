@@ -215,7 +215,7 @@ token next_token(char *s)
                 strcpy(value,"&&");
                 pos ++;
             }else {
-                v = UNKNOW;
+                v = BAND;
                 value[0] = ch;
             }
         }else if (ch == '|') {
@@ -225,29 +225,32 @@ token next_token(char *s)
                 strcpy(value,"||");
                 pos ++;
             }else {
-                v = UNKNOW;
+                v = BOR;
                 value[0] = ch;
             }
         }else if (ch == '\'') {
             char nc = s[pos+1];
-             
+            char vt[5] = {0};
             if (nc != '\'' ||  s[pos] == '\\') {
                 if (s[pos] == '\\' && s[pos+2] == '\'') {
                     v = CCHAR;
-                    value[0] = turn_c(nc);
+                    vt[0] = '\\';
+                    vt[1] = nc;
                     pos += 3;
 
                 }
             }else{
                 v = CCHAR;
-                value[0] = s[pos];
+                vt[0] = s[pos];
                 pos += 2;
             }
+            sprintf(value,"'%s'",vt);
         }else if (ch == '\"') {
             
             char temp[1024] = {0};
             int tempi = 0;
             int t = 0;
+            temp[tempi++] = '\"';
             while (1) {
         
                 char idc = s[pos++];
@@ -257,13 +260,14 @@ token next_token(char *s)
                     continue;
                 } 
                 if (t) {
-                    idc = turn_c(idc);
+                    temp[tempi++] = '\\';
                     t = 0;
                 }
                 if (idc == '\"' && !t) break;
                 temp[tempi++] = idc;
             }
-            v = STRING;
+            temp[tempi++] = '\"';
+            v = CSTRING;
             strcpy(value,temp);
         
         }else if ( (ch >= 'A' && ch <= 'Z' ) || ch == '_' || (ch >= 'a' && ch <= 'z')) {
@@ -298,6 +302,8 @@ token next_token(char *s)
                 v = INT;
             }else if(!strcmp(value,"float")) {
                 v = FLOAT;
+            }else if(!strcmp(value,"string")) {
+                v = STRING;
             }else if(!strcmp(value,"enum")) {
                 v = ENUM;
             }else if(!strcmp(value,"struct")) {
@@ -335,6 +341,7 @@ token next_token(char *s)
                     }
                     value[ti++] = tc;
                 }else {
+                    pos --;
                     break;
                 }
             }
